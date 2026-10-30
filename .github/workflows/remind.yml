@@ -1,0 +1,38 @@
+name: Daily reminder
+
+on:
+  schedule:
+    # Checks every half hour. scripts/remind.mjs only sends when the slot matches a reminder
+    # time in config.json (in your time zone), so you never need to edit these lines.
+    - cron: "0 * * * *"
+    - cron: "30 * * * *"
+  workflow_dispatch: # "Run workflow" button = send a test notification now
+
+permissions:
+  contents: read
+
+jobs:
+  remind:
+    # The template repo itself has no devices, so don't run there.
+    if: ${{ !github.event.repository.is_template }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 200
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - id: check
+        run: node scripts/remind.mjs check
+        env:
+          EVENT: ${{ github.event_name }}
+          SCHEDULE: ${{ github.event.schedule }}
+      - if: steps.check.outputs.send == 'true'
+        run: npm install --no-audit --no-fund
+      - if: steps.check.outputs.send == 'true'
+        run: node scripts/remind.mjs send
+        env:
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+          MESSAGE: ${{ steps.check.outputs.message }}
