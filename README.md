@@ -5,6 +5,8 @@ A private daily mental and physical health check-in that runs entirely on GitHub
 - **A home-screen app** on your phone with a one-minute check-in (mood, stress, energy, sleep, exercise, habits, notes) and a dashboard of trends.
 - **A daily reminder** sometime in the evening window you choose, only if you haven't checked in yet.
 - **Encrypted with your passphrase** on your device before anything is uploaded. Your repo is public, but it only ever holds scrambled data that only you can unlock.
+- **A weekly review and an all-time summary**, worked out on your device. A notification on Monday morning tells you last week's review is ready.
+- **Works without a connection.** Check-ins are saved on your device and upload on their own once it's back online.
 
 This is a template. Each person makes their own copy, and their data lives in their own repo.
 
@@ -21,7 +23,7 @@ You need a GitHub account and an iPhone on iOS 16.4 or newer. Android and deskto
 - After a minute or two, your app is at `https://<your-username>.github.io/<repo-name>/`.
 
 **3. Set it up on a computer.** Open `https://<your-username>.github.io/<repo-name>/setup.html` and do:
-1. **Token:** create a fine-grained token for *just this repo* with **Contents: Read and write**, then paste it in.
+1. **Token:** create a fine-grained token for *just this repo* with **Contents: Read and write**, paste it in, and enter its expiry date so the app can warn you two weeks before it stops working.
 2. **Passphrase:** choose four or more random words. Save them in a password manager first. **If you lose the passphrase, your data can't be recovered.**
 3. **Schedule:** your time zone is filled in for you. Pick your reminder window.
 4. **Notification keys:** click **Generate keys**, copy the private key, and add it as a repo secret named `VAPID_PRIVATE_KEY` (Settings → Secrets and variables → Actions).
@@ -42,6 +44,12 @@ You need a GitHub account and an iPhone on iOS 16.4 or newer. Android and deskto
 | Your time zone and reminder window | Your passphrase, which is never stored or uploaded |
 | Which days you checked in (commit messages "Check-in for YYYY-MM-DD") | The `VAPID_PRIVATE_KEY` repo secret |
 | Your devices' push addresses (useless without the private key) | Your GitHub tokens, which stay on each device |
+
+## Without a connection
+
+Open the app once while online after setting it up. After that it opens and saves without signal, and it shows your last downloaded data. Saved check-ins upload when you next open the app or bring it back on screen with a connection, because iPhones don't let web apps upload in the background.
+
+If you check in offline, the reminder job can't see that yet, so you may still get that evening's reminder.
 
 ## Customizing
 
